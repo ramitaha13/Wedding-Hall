@@ -5,8 +5,8 @@ import "./index.css";
 import Home from "./components/home.jsx";
 import Login from "./components/loginpage.jsx";
 import Venuedetailspage from "./components/venuedetailspage.jsx";
-import VenueManagerDashboard from "./components/venueManagerDashboard.jsx";
-import AdminDashboard from "./components/adminDashboard.jsx";
+import VenueManagerDashboard from "./components/venuemanagerdashboard.jsx";
+import AdminDashboard from "./components/admindashboard.jsx";
 
 const router = createBrowserRouter([
   {
