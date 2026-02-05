@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./components/home.jsx";
 import Venuedetailspage from "./components/venuedetailspage.jsx";
+import LoginPage from "./components/loginPage.jsx";
+import VenueManagerDashboard from "./components/venueManagerDashboard.jsx";
+import AdminDashboard from "./components/adminDashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,18 @@ const router = createBrowserRouter([
   {
     path: "/venue/:id",
     element: <Venuedetailspage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/venue-dashboard",
+    element: <VenueManagerDashboard />,
+  },
+  {
+    path: "/admin-dashboard",
+    element: <AdminDashboard />,
   },
 ]);
 

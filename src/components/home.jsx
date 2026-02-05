@@ -15,6 +15,7 @@ import {
   Check,
   Sparkles,
   ChevronDown,
+  Lock,
   Image as ImageIcon,
 } from "lucide-react";
 
@@ -269,6 +270,17 @@ const WeddingHallCustomerHomepage = () => {
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center">
+            {/* Login Button for Managers */}
+            <div className="absolute top-6 left-6">
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-all duration-200 flex items-center gap-2 border border-white/30"
+              >
+                <Lock className="w-5 h-5" />
+                כניסה למנהלים
+              </button>
+            </div>
+
             <div className="flex justify-center mb-6">
               <Sparkles className="w-16 h-16 animate-pulse" />
             </div>
