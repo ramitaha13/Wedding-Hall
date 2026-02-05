@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   MapPin,
@@ -153,6 +154,7 @@ const generateVenues = () => {
 };
 
 const WeddingHallCustomerHomepage = () => {
+  const navigate = useNavigate();
   const [venues] = useState(generateVenues());
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
@@ -247,6 +249,14 @@ const WeddingHallCustomerHomepage = () => {
   const calculateTotalPrice = (venue) => {
     const guests = parseInt(guestCount) || venue.minGuests;
     return venue.pricePerGuest * guests;
+  };
+
+  const handleBookNow = (venueId) => {
+    navigate(`/venue/${venueId}`);
+  };
+
+  const handleViewDetails = (venueId) => {
+    navigate(`/venue/${venueId}`);
   };
 
   return (
@@ -504,10 +514,16 @@ const WeddingHallCustomerHomepage = () => {
 
                   {/* Buttons */}
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
+                    <button
+                      onClick={() => handleBookNow(venue.id)}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105"
+                    >
                       הזמן עכשיו
                     </button>
-                    <button className="border-2 border-purple-600 text-purple-600 px-4 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors">
+                    <button
+                      onClick={() => handleViewDetails(venue.id)}
+                      className="border-2 border-purple-600 text-purple-600 px-4 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
+                    >
                       פרטים נוספים
                     </button>
                   </div>
