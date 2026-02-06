@@ -4,18 +4,14 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
   Star,
   Heart,
   Phone,
   Mail,
-  Clock,
   Check,
   X,
   ArrowRight,
   Share2,
-  MessageCircle,
-  Camera,
   ChevronLeft,
   ChevronRight,
   Wifi,
@@ -23,9 +19,10 @@ import {
   Music,
   Utensils,
   Home,
-  Sparkles,
   CheckCircle2,
   XCircle,
+  Play,
+  ExternalLink,
 } from "lucide-react";
 
 // נתוני אולמות מלאים (בפרודקשן יגיעו מה-API)
@@ -36,17 +33,48 @@ const venuesData = {
     location: "תל אביב",
     address: "רחוב הרצל 123, תל אביב",
     images: [
-      "https://images.unsplash.com/photo-1519167758481-83f29da8ba0a?w=1200&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=1200&h=800&fit=crop",
     ],
+    videos: [
+      {
+        id: 1,
+        title: "סיור וירטואלי באולם",
+        thumbnail:
+          "https://images.unsplash.com/photo-1519167758481-83f29da8ba0a?w=600&h=400&fit=crop",
+        url: "https://www.youtube.com/watch?v=example1",
+        duration: "3:45",
+      },
+      {
+        id: 2,
+        title: "אירוע לדוגמה - חתונה של שרה ויוסי",
+        thumbnail:
+          "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=400&fit=crop",
+        url: "https://www.youtube.com/watch?v=example2",
+        duration: "5:20",
+      },
+      {
+        id: 3,
+        title: "המטבח והאוכל שלנו",
+        thumbnail:
+          "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=600&h=400&fit=crop",
+        url: "https://www.youtube.com/watch?v=example3",
+        duration: "2:15",
+      },
+    ],
+    socialMedia: {
+      facebook: "https://www.facebook.com/versailleshall",
+      instagram: "https://www.instagram.com/versailleshall",
+      tiktok: "https://www.tiktok.com/@versailleshall",
+      waze: "https://waze.com/ul/hsv8yx4321",
+    },
     rating: 4.9,
     reviews: 127,
     minGuests: 100,
     maxGuests: 500,
-    pricePerGuest: 450,
     description:
       "אולם ורסאי הוא אולם יוקרתי ומפואר בלב תל אביב, המציע חוויית אירוח ברמה הגבוהה ביותר. האולם משלב עיצוב קלאסי עם טכנולוגיה מתקדמת ושירות אישי ומסור. עם ניסיון של למעלה מ-20 שנה בתחום האירוח, אנו מתחייבים להפוך את החתונה שלכם לאירוע בלתי נשכח.",
     features: [
@@ -68,42 +96,6 @@ const venuesData = {
       "חניה מקורה ל-150 רכבים",
       "גנרטור חירום",
       "מערכת אבטחה 24/7",
-    ],
-    packages: [
-      {
-        name: "חבילת ברונזה",
-        price: 350,
-        features: [
-          "אולם מעוצב",
-          "כיסאות וסידור שולחנות",
-          "מפות ומפיות",
-          "מערכת הגברה בסיסית",
-        ],
-      },
-      {
-        name: "חבילת כסף",
-        price: 450,
-        features: [
-          "כל מה שבחבילת ברונזה",
-          "עיצוב פרחים מלא",
-          "DJ מקצועי",
-          "תאורה מיוחדת",
-          "בר משקאות",
-        ],
-        popular: true,
-      },
-      {
-        name: "חבילת זהב",
-        price: 600,
-        features: [
-          "כל מה שבחבילת כסף",
-          "צלם ווידאו מקצועי",
-          "אלבום דיגיטלי",
-          "פינת קוקטיילים",
-          "שף פרטי",
-          "עוגת חתונה מעוצבת",
-        ],
-      },
     ],
     availableDates: [
       "2026-03-15",
@@ -158,23 +150,42 @@ const venuesData = {
       minGuests: "מינימום 100 אורחים לאירוע.",
     },
   },
-  // ניתן להוסיף עוד אולמות כאן...
 };
+
+// Social Media Icons (SVG components)
+const FacebookIcon = () => (
+  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+  </svg>
+);
+
+const TikTokIcon = () => (
+  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+  </svg>
+);
+
+const WazeIcon = () => (
+  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M14.84 6.03c-.75 0-1.37.62-1.37 1.37 0 .76.62 1.37 1.37 1.37.76 0 1.37-.61 1.37-1.37 0-.75-.61-1.37-1.37-1.37zM9.48 6.03c-.75 0-1.37.62-1.37 1.37 0 .76.62 1.37 1.37 1.37.76 0 1.37-.61 1.37-1.37 0-.75-.61-1.37-1.37-1.37zM12 0C6.27 0 1.62 4.1 1.62 9.14c0 1.69.53 3.29 1.49 4.7.03.06.03.14.01.21l-.9 3.48c-.11.42.25.78.67.67l3.48-.9c.07-.02.15-.02.21.01 1.41.96 3.01 1.49 4.7 1.49 5.9 0 10.72-4.1 10.72-9.14C22.72 4.1 17.9 0 12 0zm0 17.14c-1.48 0-2.87-.38-4.08-1.05l-2.31.59.59-2.31c-.67-1.21-1.05-2.6-1.05-4.08 0-4.52 3.88-8.14 8.72-8.14s8.72 3.62 8.72 8.14-3.88 8.14-8.72 8.14z" />
+  </svg>
+);
 
 const VenueDetailsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // במקרה שאין id בURL, נשתמש ב-id 1 כדוגמה
   const venueId = id || "1";
   const venue = venuesData[venueId];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedPackage, setSelectedPackage] = useState(1);
-  const [guestCount, setGuestCount] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showContactForm, setShowContactForm] = useState(false);
 
   if (!venue) {
     return (
@@ -204,20 +215,6 @@ const VenueDetailsPage = () => {
     setCurrentImageIndex((prev) =>
       prev === 0 ? venue.images.length - 1 : prev - 1,
     );
-  };
-
-  const calculateTotalPrice = () => {
-    if (!guestCount) return 0;
-    const packagePrice = venue.packages[selectedPackage].price;
-    return parseInt(guestCount) * packagePrice;
-  };
-
-  const formatPrice = (amount) => {
-    return new Intl.NumberFormat("he-IL", {
-      style: "currency",
-      currency: "ILS",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const formatDate = (dateString) => {
@@ -399,51 +396,106 @@ const VenueDetailsPage = () => {
               </div>
             </div>
 
-            {/* Packages */}
+            {/* Videos Section */}
             <div className="bg-white rounded-xl p-6 shadow-md">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                חבילות ומחירים
+                סרטונים מהאולם
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {venue.packages.map((pkg, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setSelectedPackage(idx)}
-                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedPackage === idx
-                        ? "border-purple-600 bg-purple-50 shadow-lg scale-105"
-                        : "border-gray-200 hover:border-purple-300"
-                    }`}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {venue.videos.map((video) => (
+                  <a
+                    key={video.id}
+                    href={video.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
                   >
-                    {pkg.popular && (
-                      <div className="absolute -top-3 right-1/2 translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                        פופולרי ביותר
+                    <div className="relative">
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                        <div className="bg-white/90 group-hover:bg-white rounded-full p-4 group-hover:scale-110 transition-all">
+                          <Play className="w-8 h-8 text-purple-600 fill-purple-600" />
+                        </div>
                       </div>
-                    )}
-
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {pkg.name}
-                    </h3>
-                    <div className="mb-4">
-                      <span className="text-3xl font-bold text-purple-600">
-                        {formatPrice(pkg.price)}
-                      </span>
-                      <span className="text-gray-600">/אורח</span>
+                      {/* Duration Badge */}
+                      <div className="absolute bottom-2 left-2 bg-black/80 text-white px-2 py-1 rounded text-sm font-medium">
+                        {video.duration}
+                      </div>
                     </div>
-
-                    <ul className="space-y-2">
-                      {pkg.features.map((feature, fIdx) => (
-                        <li
-                          key={fIdx}
-                          className="flex items-start gap-2 text-sm"
-                        >
-                          <Check className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    <div className="p-4 bg-gradient-to-t from-gray-50 to-white">
+                      <h3 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">
+                        {video.title}
+                      </h3>
+                    </div>
+                  </a>
                 ))}
+              </div>
+            </div>
+
+            {/* Social Media Section */}
+            <div className="bg-white rounded-xl p-6 shadow-md">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                עקבו אחרינו ברשתות החברתיות
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a
+                  href={venue.socialMedia.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-3 p-6 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all hover:scale-105 group"
+                >
+                  <div className="text-blue-600 group-hover:scale-110 transition-transform">
+                    <FacebookIcon />
+                  </div>
+                  <span className="font-semibold text-gray-900">Facebook</span>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </a>
+
+                <a
+                  href={venue.socialMedia.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-3 p-6 bg-pink-50 hover:bg-pink-100 rounded-xl transition-all hover:scale-105 group"
+                >
+                  <div className="text-pink-600 group-hover:scale-110 transition-transform">
+                    <InstagramIcon />
+                  </div>
+                  <span className="font-semibold text-gray-900">Instagram</span>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </a>
+
+                <a
+                  href={venue.socialMedia.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-3 p-6 bg-gray-900 hover:bg-gray-800 rounded-xl transition-all hover:scale-105 group"
+                >
+                  <div className="text-white group-hover:scale-110 transition-transform">
+                    <TikTokIcon />
+                  </div>
+                  <span className="font-semibold text-white">TikTok</span>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </a>
+
+                <a
+                  href={venue.socialMedia.waze}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-3 p-6 bg-cyan-50 hover:bg-cyan-100 rounded-xl transition-all hover:scale-105 group"
+                >
+                  <div className="text-cyan-600 group-hover:scale-110 transition-transform">
+                    <WazeIcon />
+                  </div>
+                  <span className="font-semibold text-gray-900">
+                    ניווט Waze
+                  </span>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </a>
               </div>
             </div>
 
@@ -512,48 +564,65 @@ const VenueDetailsPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Booking Card */}
+          {/* Right Column - Contact Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-              <div className="mb-6">
-                <div className="text-center mb-4">
-                  <span className="text-gray-600">מחיר התחלתי מ-</span>
-                  <div className="text-4xl font-bold text-purple-600">
-                    {formatPrice(venue.packages[0].price)}
-                  </div>
-                  <span className="text-gray-600">לאורח</span>
-                </div>
-              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                שלח בקשה להזמנה
+              </h2>
 
               {/* Booking Form */}
-              <div className="space-y-4 mb-6">
+              <form className="space-y-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    מספר אורחים
+                    שם מלא *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                    placeholder="הכנס שם מלא"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    אימייל *
                   </label>
                   <div className="relative">
-                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
-                      type="number"
-                      value={guestCount}
-                      onChange={(e) => setGuestCount(e.target.value)}
-                      placeholder={`${venue.minGuests}-${venue.maxGuests}`}
-                      min={venue.minGuests}
-                      max={venue.maxGuests}
+                      type="email"
+                      required
                       className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                      placeholder="example@email.com"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    תאריך מועדף
+                    טלפון *
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="tel"
+                      required
+                      className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                      placeholder="050-1234567"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    תאריך מועדף *
                   </label>
                   <div className="relative">
                     <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <select
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
+                      required
                       className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none appearance-none"
                     >
                       <option value="">בחר תאריך</option>
@@ -566,51 +635,29 @@ const VenueDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-700">חבילה נבחרת:</span>
-                    <span className="font-semibold text-gray-900">
-                      {venue.packages[selectedPackage].name}
-                    </span>
-                  </div>
-                  {guestCount && (
-                    <>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-700">מספר אורחים:</span>
-                        <span className="font-semibold text-gray-900">
-                          {guestCount}
-                        </span>
-                      </div>
-                      <div className="pt-3 border-t border-purple-200">
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg font-semibold text-gray-900">
-                            סה"כ משוער:
-                          </span>
-                          <span className="text-2xl font-bold text-purple-600">
-                            {formatPrice(calculateTotalPrice())}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    תיאור האירוע
+                  </label>
+                  <textarea
+                    rows="4"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
+                    placeholder="ספר לנו על האירוע שלך, מספר אורחים משוער, דרישות מיוחדות..."
+                  ></textarea>
                 </div>
-              </div>
 
-              <button
-                onClick={() => setShowContactForm(true)}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-semibold hover:shadow-xl transition-all duration-200 hover:scale-105 mb-3"
-              >
-                הזמן עכשיו
-              </button>
-
-              <button className="w-full border-2 border-purple-600 text-purple-600 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-colors mb-6">
-                שלח שאלה
-              </button>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-semibold hover:shadow-xl transition-all duration-200 hover:scale-105"
+                >
+                  שלח בקשה
+                </button>
+              </form>
 
               {/* Contact Info */}
               <div className="pt-6 border-t border-gray-200 space-y-3">
                 <h3 className="font-semibold text-gray-900 mb-4">
-                  פרטי התקשרות
+                  או צור קשר ישירות
                 </h3>
                 <a
                   href={`tel:${venue.contactInfo.phone}`}
@@ -671,76 +718,6 @@ const VenueDetailsPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Contact Form Modal */}
-      {showContactForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">טופס הזמנה</h3>
-              <button
-                onClick={() => setShowContactForm(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  שם מלא
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  placeholder="הכנס שם מלא"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  טלפון
-                </label>
-                <input
-                  type="tel"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  placeholder="050-1234567"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  אימייל
-                </label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                  placeholder="example@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  הערות
-                </label>
-                <textarea
-                  rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
-                  placeholder="ספר לנו על האירוע שלך..."
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-semibold hover:shadow-xl transition-all duration-200"
-              >
-                שלח בקשה
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
