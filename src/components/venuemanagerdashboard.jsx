@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   Users,
-  DollarSign,
   TrendingUp,
   Bell,
   Settings,
@@ -24,6 +23,8 @@ import {
   Image as ImageIcon,
   Menu,
   X,
+  Upload,
+  Camera,
 } from "lucide-react";
 
 const VenueManagerDashboard = () => {
@@ -31,6 +32,7 @@ const VenueManagerDashboard = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [bookingsFilter, setBookingsFilter] = useState("pending"); // pending or confirmed
 
   // נתוני דוגמה
   const [bookings] = useState([
@@ -41,7 +43,6 @@ const VenueManagerDashboard = () => {
       guests: 250,
       status: "confirmed",
       package: "חבילת זהב",
-      totalPrice: 150000,
       bookedDate: "2026-01-10",
     },
     {
@@ -51,7 +52,6 @@ const VenueManagerDashboard = () => {
       guests: 180,
       status: "pending",
       package: "חבילת כסף",
-      totalPrice: 81000,
       bookedDate: "2026-01-15",
     },
     {
@@ -61,7 +61,6 @@ const VenueManagerDashboard = () => {
       guests: 300,
       status: "confirmed",
       package: "חבילת זהב",
-      totalPrice: 180000,
       bookedDate: "2026-01-20",
     },
     {
@@ -71,8 +70,46 @@ const VenueManagerDashboard = () => {
       guests: 150,
       status: "cancelled",
       package: "חבילת כסף",
-      totalPrice: 67500,
       bookedDate: "2025-12-25",
+    },
+    {
+      id: 5,
+      clientName: "משפחת דוד",
+      eventDate: "2026-06-12",
+      guests: 220,
+      status: "pending",
+      package: "חבילת זהב",
+      bookedDate: "2026-01-25",
+    },
+    {
+      id: 6,
+      clientName: "משפחת שמעון",
+      eventDate: "2026-07-08",
+      guests: 190,
+      status: "confirmed",
+      package: "חבילת כסף",
+      bookedDate: "2026-01-28",
+    },
+  ]);
+
+  const [venueImages, setVenueImages] = useState([
+    {
+      id: 1,
+      url: "https://images.unsplash.com/photo-1519167758481-83f29da8ba0a?w=400&h=300&fit=crop",
+      title: "אולם ראשי",
+      uploadDate: "2026-01-15",
+    },
+    {
+      id: 2,
+      url: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&h=300&fit=crop",
+      title: "גן אירועים",
+      uploadDate: "2026-01-16",
+    },
+    {
+      id: 3,
+      url: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=400&h=300&fit=crop",
+      title: "במה מרכזית",
+      uploadDate: "2026-01-17",
     },
   ]);
 
@@ -80,10 +117,11 @@ const VenueManagerDashboard = () => {
     totalBookings: bookings.filter((b) => b.status !== "cancelled").length,
     pendingBookings: bookings.filter((b) => b.status === "pending").length,
     confirmedBookings: bookings.filter((b) => b.status === "confirmed").length,
-    totalRevenue: bookings
-      .filter((b) => b.status === "confirmed")
-      .reduce((sum, b) => sum + b.totalPrice, 0),
   };
+
+  const filteredBookingsList = bookings.filter(
+    (b) => b.status === bookingsFilter,
+  );
 
   useEffect(() => {
     // בדיקה אם המשתמש מחובר
@@ -137,14 +175,6 @@ const VenueManagerDashboard = () => {
     );
   };
 
-  const formatPrice = (amount) => {
-    return new Intl.NumberFormat("he-IL", {
-      style: "currency",
-      currency: "ILS",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("he-IL", {
@@ -160,6 +190,21 @@ const VenueManagerDashboard = () => {
       month: "short",
       day: "numeric",
     }).format(date);
+  };
+
+  const handleImageUpload = (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      // כאן תוכל להוסיף לוגיקה להעלאת התמונות לשרת
+      console.log("Uploading images:", files);
+      alert("תמונות הועלו בהצלחה!");
+    }
+  };
+
+  const handleDeleteImage = (imageId) => {
+    if (confirm("האם אתה בטוח שברצונך למחוק תמונה זו?")) {
+      setVenueImages(venueImages.filter((img) => img.id !== imageId));
+    }
   };
 
   if (!user) {
@@ -240,14 +285,10 @@ const VenueManagerDashboard = () => {
 
           <button
             onClick={() => {
-              setActiveTab("bookings");
+              navigate("/bookingspage");
               setIsSidebarOpen(false);
             }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === "bookings"
-                ? "bg-white/20 font-semibold"
-                : "hover:bg-white/10"
-            }`}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
           >
             <Calendar className="w-5 h-5" />
             הזמנות
@@ -255,14 +296,25 @@ const VenueManagerDashboard = () => {
 
           <button
             onClick={() => {
-              setActiveTab("venue-settings");
+              setActiveTab("images");
               setIsSidebarOpen(false);
             }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === "venue-settings"
+              activeTab === "images"
                 ? "bg-white/20 font-semibold"
                 : "hover:bg-white/10"
             }`}
+          >
+            <ImageIcon className="w-5 h-5" />
+            ניהול תמונות
+          </button>
+
+          <button
+            onClick={() => {
+              navigate("/venuesettingspage");
+              setIsSidebarOpen(false);
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
           >
             <Settings className="w-5 h-5" />
             הגדרות אולם
@@ -270,17 +322,13 @@ const VenueManagerDashboard = () => {
 
           <button
             onClick={() => {
-              setActiveTab("messages");
+              navigate("/reviewsandmessagespage");
               setIsSidebarOpen(false);
             }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === "messages"
-                ? "bg-white/20 font-semibold"
-                : "hover:bg-white/10"
-            }`}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
           >
             <MessageSquare className="w-5 h-5" />
-            הודעות
+            ביקורות והודעות
             <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
               3
             </span>
@@ -338,7 +386,7 @@ const VenueManagerDashboard = () => {
         {activeTab === "overview" && (
           <div>
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
               <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 border-t-4 border-blue-500">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
                   <div className="w-full">
@@ -386,133 +434,60 @@ const VenueManagerDashboard = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 border-t-4 border-purple-500 col-span-2 lg:col-span-1">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                  <div className="w-full">
-                    <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1">
-                      סה"כ הכנסות
-                    </p>
-                    <p className="text-xl sm:text-2xl font-bold text-gray-900">
-                      {formatPrice(stats.totalRevenue)}
-                    </p>
-                  </div>
-                  <div className="hidden sm:block bg-purple-100 p-3 rounded-full mt-2 sm:mt-0">
-                    <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Recent Bookings - Desktop Table View */}
-            <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 hidden lg:block">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                הזמנות אחרונות
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        לקוח
-                      </th>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        תאריך אירוע
-                      </th>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        אורחים
-                      </th>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        חבילה
-                      </th>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        סטטוס
-                      </th>
-                      <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
-                        פעולות
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {bookings.slice(0, 5).map((booking) => (
-                      <tr key={booking.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {booking.clientName}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-700">
-                          {formatDate(booking.eventDate)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-700">
-                          {booking.guests}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-700">
-                          {booking.package}
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          {getStatusBadge(booking.status)}
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          <div className="flex gap-2">
-                            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                              <Eye className="w-5 h-5" />
-                            </button>
-                            <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                              <Edit className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Recent Bookings - Mobile Card View */}
-            <div className="lg:hidden space-y-3">
-              <h2 className="text-lg font-bold text-gray-900 mb-3">
-                הזמנות אחרונות
-              </h2>
-              {bookings.slice(0, 5).map((booking) => (
-                <div
-                  key={booking.id}
-                  className="bg-white rounded-xl shadow-md p-4 border-r-4 border-purple-500"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-sm">
-                        {booking.clientName}
-                      </h3>
-                      <p className="text-xs text-gray-600 mt-0.5">
-                        {formatDateShort(booking.eventDate)}
-                      </p>
-                    </div>
-                    {getStatusBadge(booking.status)}
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <button
+                onClick={() => navigate("/bookings")}
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <Clock className="w-8 h-8" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
-                    <div className="flex items-center gap-1.5 text-gray-600">
-                      <Users className="w-3.5 h-3.5" />
-                      <span>{booking.guests} אורחים</span>
-                    </div>
-                    <div className="text-gray-600">
-                      <span className="font-semibold">{booking.package}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                    <span className="text-sm font-bold text-purple-600">
-                      {formatPrice(booking.totalPrice)}
-                    </span>
-                    <div className="flex gap-2">
-                      <button className="p-1.5 text-blue-600 bg-blue-50 rounded-lg">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-1.5 text-green-600 bg-green-50 rounded-lg">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <div className="text-right">
+                    <h3 className="text-xl font-bold mb-1">הזמנות בהמתנה</h3>
+                    <p className="text-yellow-100">
+                      {stats.pendingBookings} הזמנות ממתינות לאישור
+                    </p>
                   </div>
                 </div>
-              ))}
+              </button>
+
+              <button
+                onClick={() => navigate("/bookings")}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <CheckCircle className="w-8 h-8" />
+                  </div>
+                  <div className="text-right">
+                    <h3 className="text-xl font-bold mb-1">הזמנות מאושרות</h3>
+                    <p className="text-green-100">
+                      {stats.confirmedBookings} הזמנות מאושרות
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("images")}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <Camera className="w-8 h-8" />
+                  </div>
+                  <div className="text-right">
+                    <h3 className="text-xl font-bold mb-1">העלאת תמונות</h3>
+                    <p className="text-purple-100">
+                      {venueImages.length} תמונות באולם
+                    </p>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         )}
@@ -531,6 +506,36 @@ const VenueManagerDashboard = () => {
                 </button>
               </div>
 
+              {/* Filter Tabs */}
+              <div className="flex gap-2 mb-4">
+                <button
+                  onClick={() => setBookingsFilter("pending")}
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-lg font-medium transition-all ${
+                    bookingsFilter === "pending"
+                      ? "bg-yellow-500 text-white shadow-md"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>בהמתנה ({stats.pendingBookings})</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setBookingsFilter("confirmed")}
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-lg font-medium transition-all ${
+                    bookingsFilter === "confirmed"
+                      ? "bg-green-500 text-white shadow-md"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>מאושרות ({stats.confirmedBookings})</span>
+                  </div>
+                </button>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="relative flex-1">
                   <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
@@ -540,12 +545,6 @@ const VenueManagerDashboard = () => {
                     className="w-full pr-9 sm:pr-10 pl-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm sm:text-base"
                   />
                 </div>
-                <select className="px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm sm:text-base">
-                  <option value="all">כל הסטטוסים</option>
-                  <option value="confirmed">מאושר</option>
-                  <option value="pending">ממתין</option>
-                  <option value="cancelled">מבוטל</option>
-                </select>
               </div>
             </div>
 
@@ -570,9 +569,6 @@ const VenueManagerDashboard = () => {
                       חבילה
                     </th>
                     <th className="px-6 py-4 text-right text-sm font-semibold">
-                      מחיר
-                    </th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold">
                       סטטוס
                     </th>
                     <th className="px-6 py-4 text-right text-sm font-semibold">
@@ -581,7 +577,7 @@ const VenueManagerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {bookings.map((booking) => (
+                  {filteredBookingsList.map((booking) => (
                     <tr key={booking.id} className="hover:bg-purple-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">
                         #{booking.id}
@@ -597,9 +593,6 @@ const VenueManagerDashboard = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {booking.package}
-                      </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                        {formatPrice(booking.totalPrice)}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         {getStatusBadge(booking.status)}
@@ -625,7 +618,7 @@ const VenueManagerDashboard = () => {
 
             {/* Mobile Cards */}
             <div className="lg:hidden space-y-3">
-              {bookings.map((booking) => (
+              {filteredBookingsList.map((booking) => (
                 <div
                   key={booking.id}
                   className="bg-white rounded-xl shadow-md p-4"
@@ -653,24 +646,107 @@ const VenueManagerDashboard = () => {
                       <span>{booking.package}</span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                    <span className="text-sm font-bold text-purple-600">
-                      {formatPrice(booking.totalPrice)}
-                    </span>
-                    <div className="flex gap-2">
-                      <button className="p-1.5 text-blue-600 bg-blue-50 rounded-lg">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-1.5 text-green-600 bg-green-50 rounded-lg">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-1.5 text-red-600 bg-red-50 rounded-lg">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                    <button className="p-1.5 text-blue-600 bg-blue-50 rounded-lg">
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button className="p-1.5 text-green-600 bg-green-50 rounded-lg">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button className="p-1.5 text-red-600 bg-red-50 rounded-lg">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {filteredBookingsList.length === 0 && (
+              <div className="bg-white rounded-xl shadow-md p-12 text-center">
+                <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  אין הזמנות{" "}
+                  {bookingsFilter === "pending" ? "בהמתנה" : "מאושרות"}
+                </h3>
+                <p className="text-gray-600">
+                  {bookingsFilter === "pending"
+                    ? "כל ההזמנות אושרו או שאין הזמנות חדשות"
+                    : "עדיין אין הזמנות מאושרות"}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Images Tab */}
+        {activeTab === "images" && (
+          <div>
+            <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+                העלאת תמונות לאולם
+              </h2>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-500 transition-colors">
+                <input
+                  type="file"
+                  id="image-upload"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  <div className="bg-purple-100 p-6 rounded-full mb-4">
+                    <Upload className="w-12 h-12 text-purple-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    גרור קבצים לכאן או לחץ להעלאה
+                  </h3>
+                  <p className="text-gray-600 text-sm">PNG, JPG, GIF עד 10MB</p>
+                  <button className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all">
+                    בחר תמונות
+                  </button>
+                </label>
+              </div>
+            </div>
+
+            {/* Images Grid */}
+            <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                תמונות קיימות ({venueImages.length})
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {venueImages.map((image) => (
+                  <div
+                    key={image.id}
+                    className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all"
+                  >
+                    <img
+                      src={image.url}
+                      alt={image.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center">
+                      <button
+                        onClick={() => handleDeleteImage(image.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 text-white p-2 rounded-lg hover:bg-red-600"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                      <p className="text-white text-sm font-medium">
+                        {image.title}
+                      </p>
+                      <p className="text-white/80 text-xs">
+                        {formatDateShort(image.uploadDate)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
