@@ -323,7 +323,7 @@ const BookingsPage = () => {
         <nav className="space-y-2">
           <button
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/venuemanagerdashboard");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
@@ -350,7 +350,7 @@ const BookingsPage = () => {
 
           <button
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/venuesettingspage");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
@@ -361,13 +361,13 @@ const BookingsPage = () => {
 
           <button
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/reviewsandmessagespage");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
           >
             <MessageSquare className="w-5 h-5" />
-            הודעות
+            ביקורת והודעות
             <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
               3
             </span>
