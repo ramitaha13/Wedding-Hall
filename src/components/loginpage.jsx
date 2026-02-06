@@ -58,7 +58,7 @@ const LoginPage = () => {
 
         // ניווט לדף המתאים
         if (userType === "venue") {
-          navigate("/venue-dashboard");
+          navigate("/venuemanagerdashboard");
         } else {
           navigate("/admin-dashboard");
         }
