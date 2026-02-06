@@ -34,7 +34,7 @@ const BookingsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // נתוני דוגמה להזמנות
-  const [bookings] = useState([
+  const [bookings, setBookings] = useState([
     {
       id: 1,
       clientName: "משפחת כהן",
@@ -223,8 +223,30 @@ const BookingsPage = () => {
 
   const handleDeleteBooking = (bookingId) => {
     if (confirm("האם אתה בטוח שברצונך למחוק הזמנה זו?")) {
-      console.log("Deleting booking:", bookingId);
+      setBookings(bookings.filter((b) => b.id !== bookingId));
       alert("ההזמנה נמחקה בהצלחה!");
+    }
+  };
+
+  const handleApproveBooking = (bookingId) => {
+    if (confirm("האם אתה בטוח שברצונך לאשר הזמנה זו?")) {
+      setBookings(
+        bookings.map((b) =>
+          b.id === bookingId ? { ...b, status: "confirmed" } : b,
+        ),
+      );
+      alert("ההזמנה אושרה בהצלחה! 🎉");
+    }
+  };
+
+  const handleCancelBooking = (bookingId) => {
+    if (confirm("האם אתה בטוח שברצונך לבטל הזמנה זו?")) {
+      setBookings(
+        bookings.map((b) =>
+          b.id === bookingId ? { ...b, status: "cancelled" } : b,
+        ),
+      );
+      alert("ההזמנה בוטלה.");
     }
   };
 
@@ -301,7 +323,7 @@ const BookingsPage = () => {
         <nav className="space-y-2">
           <button
             onClick={() => {
-              navigate("/venuemanagerdashboard");
+              navigate("/dashboard");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
@@ -328,7 +350,7 @@ const BookingsPage = () => {
 
           <button
             onClick={() => {
-              navigate("/venuesettingspage");
+              navigate("/dashboard");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
@@ -339,13 +361,13 @@ const BookingsPage = () => {
 
           <button
             onClick={() => {
-              navigate("/reviewsandmessagespage");
+              navigate("/dashboard");
               setIsSidebarOpen(false);
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-white/10"
           >
             <MessageSquare className="w-5 h-5" />
-            ביקורת והודעות
+            הודעות
             <span className="mr-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
               3
             </span>
@@ -609,28 +631,51 @@ const BookingsPage = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      onClick={() => handleViewDetails(booking.id)}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium"
-                    >
-                      <Eye className="w-5 h-5" />
-                      <span className="hidden sm:inline">צפייה</span>
-                    </button>
-                    <button
-                      onClick={() => handleEditBooking(booking.id)}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors font-medium"
-                    >
-                      <Edit className="w-5 h-5" />
-                      <span className="hidden sm:inline">עריכה</span>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteBooking(booking.id)}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                      <span className="hidden sm:inline">מחיקה</span>
-                    </button>
+                  <div className="space-y-3">
+                    {/* Approve/Cancel buttons - only for pending bookings */}
+                    {booking.status === "pending" && (
+                      <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-200">
+                        <button
+                          onClick={() => handleApproveBooking(booking.id)}
+                          className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold shadow-md hover:shadow-lg"
+                        >
+                          <CheckCircle className="w-5 h-5" />
+                          <span>אשר הזמנה</span>
+                        </button>
+                        <button
+                          onClick={() => handleCancelBooking(booking.id)}
+                          className="flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-semibold shadow-md hover:shadow-lg"
+                        >
+                          <XCircle className="w-5 h-5" />
+                          <span>בטל הזמנה</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Other action buttons */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        onClick={() => handleViewDetails(booking.id)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                      >
+                        <Eye className="w-5 h-5" />
+                        <span className="hidden sm:inline">צפייה</span>
+                      </button>
+                      <button
+                        onClick={() => handleEditBooking(booking.id)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors font-medium"
+                      >
+                        <Edit className="w-5 h-5" />
+                        <span className="hidden sm:inline">עריכה</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBooking(booking.id)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                        <span className="hidden sm:inline">מחיקה</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
