@@ -4,19 +4,15 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
   Star,
-  Heart,
   Search,
   Filter,
   Phone,
   Mail,
   Clock,
-  Check,
   Sparkles,
   ChevronDown,
   Lock,
-  Image as ImageIcon,
 } from "lucide-react";
 
 // נתוני דוגמה לאולמות
@@ -27,12 +23,11 @@ const generateVenues = () => {
       name: "אולם ורסאי",
       location: "תל אביב",
       image:
-        "https://images.unsplash.com/photo-1519167758481-83f29da8ba0a?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
       rating: 4.9,
       reviews: 127,
       minGuests: 100,
       maxGuests: 500,
-      pricePerGuest: 450,
       features: ["חניה", "גן אירועים", "מטבח כשר", "מזגן"],
       availableDates: ["2026-03-15", "2026-04-20", "2026-05-10"],
       description:
@@ -49,7 +44,6 @@ const generateVenues = () => {
       reviews: 203,
       minGuests: 150,
       maxGuests: 400,
-      pricePerGuest: 380,
       features: ["גן פתוח", "נוף לים", "חופה מעוצבת", "תאורה רומנטית"],
       availableDates: ["2026-03-22", "2026-04-15", "2026-06-01"],
       description: "גן אירועים מרהיב עם נוף פנורמי לים התיכון ואווירה רומנטית",
@@ -65,7 +59,6 @@ const generateVenues = () => {
       reviews: 156,
       minGuests: 200,
       maxGuests: 600,
-      pricePerGuest: 420,
       features: ["2 אולמות", "במה מרכזית", "מערכת הגברה", "חדר כלה"],
       availableDates: ["2026-04-05", "2026-05-18", "2026-06-20"],
       description: "אולם מפואר בירושלים, מושלם לחתונות גדולות ומרשימות",
@@ -81,7 +74,6 @@ const generateVenues = () => {
       reviews: 89,
       minGuests: 80,
       maxGuests: 350,
-      pricePerGuest: 350,
       features: ["מיקום מרכזי", "חניה מקורה", "מטבח כשר למהדרין", "DJ במקום"],
       availableDates: ["2026-03-28", "2026-04-25", "2026-05-30"],
       description: "אולם אינטימי ומעוצב, מתאים לחתונות בסגנון מודרני",
@@ -97,7 +89,6 @@ const generateVenues = () => {
       reviews: 178,
       minGuests: 120,
       maxGuests: 300,
-      pricePerGuest: 480,
       features: ["סגנון איטלקי", "גן מעוצב", "ברביקיו", "פינת קוקטיילים"],
       availableDates: ["2026-04-10", "2026-05-05", "2026-06-15"],
       description: "וילה מהממת בסגנון טוסקני, מושלמת לחתונות בוטיק ייחודיות",
@@ -113,7 +104,6 @@ const generateVenues = () => {
       reviews: 134,
       minGuests: 100,
       maxGuests: 400,
-      pricePerGuest: 360,
       features: ["נוף לכנרת", "גן פתוח", "לינה באתר", "ברביקיו"],
       availableDates: ["2026-03-18", "2026-04-22", "2026-05-27"],
       description: "אולם מרהיב בצפון עם נוף עוצר נשימה לכנרת והרי הגליל",
@@ -129,7 +119,6 @@ const generateVenues = () => {
       reviews: 92,
       minGuests: 150,
       maxGuests: 450,
-      pricePerGuest: 390,
       features: ["גן ירוק", "בריכה דקורטיבית", "מפלי מים", "תאורה מיוחדת"],
       availableDates: ["2026-04-08", "2026-05-12", "2026-06-18"],
       description: "גני אירועים מעוצבים עם אלמנטים טבעיים ואווירה קסומה",
@@ -145,7 +134,6 @@ const generateVenues = () => {
       reviews: 245,
       minGuests: 180,
       maxGuests: 550,
-      pricePerGuest: 500,
       features: ["חוף ים פרטי", "שקיעה רומנטית", "מרפסת נוף", "שף פרטי"],
       availableDates: ["2026-03-25", "2026-04-30", "2026-06-05"],
       description: "אולם יוקרה מול הים, חוויה בלתי נשכחת לכל חתונה",
@@ -160,10 +148,8 @@ const WeddingHallCustomerHomepage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [guestCount, setGuestCount] = useState("");
-  const [maxBudget, setMaxBudget] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [favorites, setFavorites] = useState([]);
   const [sortBy, setSortBy] = useState("featured");
 
   // קבלת רשימת מיקומים ייחודיים
@@ -186,30 +172,15 @@ const WeddingHallCustomerHomepage = () => {
         (venue.minGuests <= parseInt(guestCount) &&
           venue.maxGuests >= parseInt(guestCount));
 
-      const matchesBudget =
-        !maxBudget ||
-        venue.pricePerGuest * (parseInt(guestCount) || venue.minGuests) <=
-          parseInt(maxBudget);
-
       const matchesDate =
         !selectedDate || venue.availableDates.includes(selectedDate);
 
-      return (
-        matchesSearch &&
-        matchesLocation &&
-        matchesGuests &&
-        matchesBudget &&
-        matchesDate
-      );
+      return matchesSearch && matchesLocation && matchesGuests && matchesDate;
     });
 
     // מיון
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case "price-low":
-          return a.pricePerGuest - b.pricePerGuest;
-        case "price-high":
-          return b.pricePerGuest - a.pricePerGuest;
         case "rating":
           return b.rating - a.rating;
         case "featured":
@@ -221,36 +192,7 @@ const WeddingHallCustomerHomepage = () => {
     });
 
     return filtered;
-  }, [
-    venues,
-    searchTerm,
-    selectedLocation,
-    guestCount,
-    maxBudget,
-    selectedDate,
-    sortBy,
-  ]);
-
-  const toggleFavorite = (venueId) => {
-    setFavorites((prev) =>
-      prev.includes(venueId)
-        ? prev.filter((id) => id !== venueId)
-        : [...prev, venueId],
-    );
-  };
-
-  const formatPrice = (amount) => {
-    return new Intl.NumberFormat("he-IL", {
-      style: "currency",
-      currency: "ILS",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const calculateTotalPrice = (venue) => {
-    const guests = parseInt(guestCount) || venue.minGuests;
-    return venue.pricePerGuest * guests;
-  };
+  }, [venues, searchTerm, selectedLocation, guestCount, selectedDate, sortBy]);
 
   const handleBookNow = (venueId) => {
     navigate(`/venue/${venueId}`);
@@ -350,18 +292,7 @@ const WeddingHallCustomerHomepage = () => {
               </button>
 
               {showFilters && (
-                <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="relative">
-                    <DollarSign className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="number"
-                      placeholder="תקציב מקסימלי"
-                      value={maxBudget}
-                      onChange={(e) => setMaxBudget(e.target.value)}
-                      className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-gray-700"
-                    />
-                  </div>
-
+                <div className="mt-4 pt-4 border-t border-gray-200">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -369,8 +300,6 @@ const WeddingHallCustomerHomepage = () => {
                   >
                     <option value="featured">מומלצים</option>
                     <option value="rating">דירוג גבוה</option>
-                    <option value="price-low">מחיר נמוך</option>
-                    <option value="price-high">מחיר גבוה</option>
                   </select>
                 </div>
               )}
@@ -396,24 +325,11 @@ const WeddingHallCustomerHomepage = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Results Summary */}
-        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              נמצאו {filteredVenues.length} אולמות מתאימים
-            </h2>
-            <p className="text-gray-600 mt-1">
-              בחרו את האולם המושלם לחתונה שלכם
-            </p>
-          </div>
-
-          {favorites.length > 0 && (
-            <div className="bg-pink-100 px-4 py-2 rounded-full flex items-center gap-2">
-              <Heart className="w-5 h-5 text-pink-600 fill-pink-600" />
-              <span className="text-pink-700 font-medium">
-                {favorites.length} מועדפים
-              </span>
-            </div>
-          )}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">
+            נמצאו {filteredVenues.length} אולמות מתאימים
+          </h2>
+          <p className="text-gray-600 mt-1">בחרו את האולם המושלם לחתונה שלכם</p>
         </div>
 
         {/* Venues Grid */}
@@ -438,19 +354,6 @@ const WeddingHallCustomerHomepage = () => {
                       מומלץ
                     </div>
                   )}
-
-                  <button
-                    onClick={() => toggleFavorite(venue.id)}
-                    className="absolute top-4 left-4 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
-                  >
-                    <Heart
-                      className={`w-6 h-6 ${
-                        favorites.includes(venue.id)
-                          ? "fill-pink-500 text-pink-500"
-                          : "text-gray-400"
-                      }`}
-                    />
-                  </button>
                 </div>
 
                 {/* Content */}
@@ -504,26 +407,6 @@ const WeddingHallCustomerHomepage = () => {
                     </span>
                   </div>
 
-                  {/* Price */}
-                  <div className="border-t border-gray-200 pt-4 mb-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="text-gray-600 text-sm">מחיר לאורח</p>
-                        <p className="text-2xl font-bold text-purple-600">
-                          {formatPrice(venue.pricePerGuest)}
-                        </p>
-                      </div>
-                      {guestCount && (
-                        <div className="text-left">
-                          <p className="text-gray-600 text-sm">סה"כ משוער</p>
-                          <p className="text-xl font-bold text-gray-900">
-                            {formatPrice(calculateTotalPrice(venue))}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
                   {/* Buttons */}
                   <div className="grid grid-cols-2 gap-3">
                     <button
@@ -559,7 +442,6 @@ const WeddingHallCustomerHomepage = () => {
                 setSearchTerm("");
                 setSelectedLocation("all");
                 setGuestCount("");
-                setMaxBudget("");
                 setSelectedDate("");
               }}
               className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
