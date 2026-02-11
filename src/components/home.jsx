@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Calendar,
   MapPin,
@@ -177,54 +177,66 @@ const WeddingHallCustomerHomepage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("featured");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  // Animation variants
+  // Simplified animation variants for better performance
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
+        staggerChildren: isMobile ? 0.05 : 0.1,
+        delayChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: isMobile ? 10 : 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 100,
+        stiffness: isMobile ? 150 : 100,
+        damping: isMobile ? 15 : 10,
       },
     },
   };
 
   const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: isMobile ? 20 : 60 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: isMobile ? 0.3 : 0.6,
         ease: "easeOut",
       },
     },
   };
 
   const scaleInVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { opacity: 0, scale: 0.9 },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.5,
+        duration: isMobile ? 0.3 : 0.5,
         ease: "easeOut",
       },
     },
@@ -233,8 +245,8 @@ const WeddingHallCustomerHomepage = () => {
   const cardHoverVariants = {
     rest: { scale: 1, y: 0 },
     hover: {
-      scale: 1.03,
-      y: -8,
+      scale: isMobile ? 1 : 1.03,
+      y: isMobile ? 0 : -8,
       transition: {
         duration: 0.3,
         ease: "easeOut",
@@ -294,6 +306,12 @@ const WeddingHallCustomerHomepage = () => {
 
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      {/* Scroll Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-purple-500 to-pink-500 transform-origin-left z-50"
+        style={{ scaleX: scrollYProgress }}
+      />
+
       {/* Modern Navigation Bar */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
@@ -418,55 +436,87 @@ const WeddingHallCustomerHomepage = () => {
 
       {/* Hero Section - Ultra Modern */}
       <motion.section
-        style={{ opacity, scale }}
+        style={isMobile ? {} : { opacity, scale }}
         className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden"
       >
-        {/* Animated Background */}
+        {/* Animated Background - Simplified for mobile */}
         <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-purple-50 to-pink-50">
-          <div className="absolute inset-0 opacity-30">
-            <motion.div
-              animate={{
-                x: [0, 30, 0],
-                y: [0, -50, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute top-20 right-20 w-72 h-72 bg-rose-300 rounded-full mix-blend-multiply filter blur-xl"
-            ></motion.div>
-            <motion.div
-              animate={{
-                x: [0, -20, 0],
-                y: [0, 20, 0],
-                scale: [1, 0.9, 1],
-              }}
-              transition={{
-                duration: 9,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2,
-              }}
-              className="absolute top-40 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"
-            ></motion.div>
-            <motion.div
-              animate={{
-                x: [0, 15, 0],
-                y: [0, 30, 0],
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 4,
-              }}
-              className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl"
-            ></motion.div>
-          </div>
+          {!isMobile && (
+            <div className="absolute inset-0 opacity-30">
+              <motion.div
+                animate={{
+                  x: [0, 30, 0],
+                  y: [0, -50, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 7,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute top-20 right-20 w-72 h-72 bg-rose-300 rounded-full mix-blend-multiply filter blur-xl"
+              ></motion.div>
+              <motion.div
+                animate={{
+                  x: [0, -20, 0],
+                  y: [0, 20, 0],
+                  scale: [1, 0.9, 1],
+                }}
+                transition={{
+                  duration: 9,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2,
+                }}
+                className="absolute top-40 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl"
+              ></motion.div>
+              <motion.div
+                animate={{
+                  x: [0, 15, 0],
+                  y: [0, 30, 0],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 4,
+                }}
+                className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl"
+              ></motion.div>
+            </div>
+          )}
         </div>
+
+        {/* Floating Hearts - Only on desktop */}
+        {!isMobile && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{
+                  y: "100%",
+                  x: `${Math.random() * 100}%`,
+                  opacity: 0,
+                }}
+                animate={{
+                  y: "-100%",
+                  opacity: [0, 1, 1, 0],
+                  rotate: [0, 360],
+                }}
+                transition={{
+                  duration: 15 + Math.random() * 10,
+                  repeat: Infinity,
+                  delay: i * 2,
+                  ease: "linear",
+                }}
+                className="absolute"
+              >
+                <Heart className="w-8 h-8 text-rose-300 fill-rose-300" />
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -478,10 +528,26 @@ const WeddingHallCustomerHomepage = () => {
             {/* Badge */}
             <motion.div
               variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
+              whileHover={isMobile ? {} : { scale: 1.05 }}
               className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg mb-8 border border-rose-100"
             >
-              <Sparkles className="w-4 h-4 text-rose-500" />
+              {!isMobile ? (
+                <motion.div
+                  animate={{
+                    rotate: [0, 360],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Sparkles className="w-4 h-4 text-rose-500" />
+                </motion.div>
+              ) : (
+                <Sparkles className="w-4 h-4 text-rose-500" />
+              )}
               <span className="text-sm font-semibold text-gray-700">
                 #1 בישראל להזמנת אולמות
               </span>
@@ -496,7 +562,7 @@ const WeddingHallCustomerHomepage = () => {
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
                 className="bg-gradient-to-r from-rose-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
               >
                 החתונה שחלמתם עליה
@@ -505,7 +571,7 @@ const WeddingHallCustomerHomepage = () => {
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
                 className="text-gray-900"
               >
                 מתחילה כאן
@@ -533,13 +599,25 @@ const WeddingHallCustomerHomepage = () => {
                 <motion.div
                   key={stat.label}
                   variants={scaleInVariants}
-                  whileHover={{ scale: 1.05, rotate: 2 }}
-                  className={`bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-${stat.color}-100`}
+                  whileHover={
+                    isMobile
+                      ? {}
+                      : {
+                          scale: 1.1,
+                          rotate: [0, -5, 5, 0],
+                          transition: { duration: 0.5 },
+                        }
+                  }
+                  className={`bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-${stat.color}-100 ${isMobile ? "" : "cursor-pointer"}`}
                 >
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.8 + index * 0.1, type: "spring" }}
+                    transition={{
+                      delay: 0.5 + index * 0.1,
+                      type: "spring",
+                      stiffness: 200,
+                    }}
                     className={`text-2xl sm:text-3xl font-bold text-${stat.color}-600 mb-1`}
                   >
                     {stat.value}
@@ -723,6 +801,7 @@ const WeddingHallCustomerHomepage = () => {
                     "הזמינו את האולם שלכם תוך דקות ספורות עם מערכת ההזמנות החכמה שלנו",
                   color: "rose",
                   delay: 0.1,
+                  gradient: "from-rose-500 to-pink-500",
                 },
                 {
                   icon: Award,
@@ -731,6 +810,7 @@ const WeddingHallCustomerHomepage = () => {
                     "כל האולמות עברו אימות קפדני כדי להבטיח לכם איכות ושירות מעולים",
                   color: "purple",
                   delay: 0.2,
+                  gradient: "from-purple-500 to-indigo-500",
                 },
                 {
                   icon: Heart,
@@ -739,41 +819,99 @@ const WeddingHallCustomerHomepage = () => {
                     "הצוות שלנו זמין עבורכם בכל שעה לעזרה ותמיכה לאורך כל הדרך",
                   color: "pink",
                   delay: 0.3,
+                  gradient: "from-pink-500 to-rose-500",
                 },
               ].map((feature, index) => (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: isMobile ? 20 : 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: feature.delay, duration: 0.6 }}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -10,
-                    transition: { duration: 0.3 },
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    delay: isMobile ? 0 : feature.delay,
+                    duration: 0.5,
                   }}
-                  className={`group bg-gradient-to-br from-${feature.color}-50 to-white p-8 rounded-3xl border-2 border-${feature.color}-100 hover:border-${feature.color}-300 transition-all duration-300 hover:shadow-xl cursor-pointer`}
+                  whileHover={
+                    isMobile
+                      ? {}
+                      : {
+                          scale: 1.05,
+                          y: -10,
+                          transition: { duration: 0.3 },
+                        }
+                  }
+                  className={`group relative bg-gradient-to-br from-${feature.color}-50 to-white p-8 rounded-3xl border-2 border-${feature.color}-100 hover:border-${feature.color}-300 transition-all duration-300 hover:shadow-2xl ${isMobile ? "" : "cursor-pointer"} overflow-hidden`}
                 >
+                  {/* Particle Effect on Hover - Desktop Only */}
+                  {!isMobile && (
+                    <motion.div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      initial={false}
+                    >
+                      {[...Array(4)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className={`absolute w-2 h-2 bg-${feature.color}-400 rounded-full`}
+                          initial={{ scale: 0, x: "50%", y: "50%" }}
+                          whileHover={{
+                            scale: [0, 1, 0],
+                            x: `${50 + (Math.random() - 0.5) * 100}%`,
+                            y: `${50 + (Math.random() - 0.5) * 100}%`,
+                            transition: {
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: i * 0.2,
+                            },
+                          }}
+                          style={{
+                            left: "50%",
+                            top: "50%",
+                          }}
+                        />
+                      ))}
+                    </motion.div>
+                  )}
+
                   <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
+                    initial={{ scale: 0, rotate: -90 }}
                     whileInView={{ scale: 1, rotate: 0 }}
                     viewport={{ once: true }}
                     transition={{
-                      delay: feature.delay + 0.2,
+                      delay: isMobile ? 0 : feature.delay + 0.2,
                       type: "spring",
-                      stiffness: 200,
+                      stiffness: 150,
                     }}
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    className={`bg-gradient-to-br from-${feature.color}-500 to-${feature.color === "rose" ? "pink" : feature.color === "purple" ? "indigo" : "rose"}-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
+                    className="relative z-10"
                   >
-                    <feature.icon className="w-8 h-8 text-white" />
+                    <motion.div
+                      whileHover={
+                        isMobile
+                          ? {}
+                          : {
+                              rotate: [0, -10, 10, -10, 0],
+                              scale: 1.1,
+                            }
+                      }
+                      transition={{ duration: 0.5 }}
+                      className={`bg-gradient-to-br ${feature.gradient} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
+                    >
+                      <feature.icon className="w-8 h-8 text-white" />
+                    </motion.div>
                   </motion.div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed relative z-10">
                     {feature.description}
                   </p>
+
+                  {/* Glow Effect - Desktop Only */}
+                  {!isMobile && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-3xl`}
+                    />
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -808,25 +946,57 @@ const WeddingHallCustomerHomepage = () => {
               {filteredVenues.map((venue, index) => (
                 <motion.div
                   key={venue.id}
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: isMobile ? 20 : 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  viewport={{ once: true, amount: 0.2 }}
                   transition={{
-                    delay: index * 0.1,
-                    duration: 0.5,
+                    delay: isMobile ? 0 : index * 0.05,
+                    duration: isMobile ? 0.3 : 0.5,
                     ease: "easeOut",
                   }}
-                  whileHover="hover"
+                  whileHover={isMobile ? {} : "hover"}
                   variants={cardHoverVariants}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-rose-200"
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-rose-200 relative"
                 >
+                  {/* Sparkle Effects on Hover - Desktop Only */}
+                  {!isMobile && (
+                    <div className="absolute inset-0 pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ scale: 0, opacity: 0 }}
+                          whileHover={{
+                            scale: [0, 1, 0],
+                            opacity: [0, 1, 0],
+                            x: [0, (Math.random() - 0.5) * 100],
+                            y: [0, (Math.random() - 0.5) * 100],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                            ease: "easeOut",
+                          }}
+                          className="absolute"
+                          style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                          }}
+                        >
+                          <Sparkles className="w-4 h-4 text-yellow-400" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Image Container */}
                   <div className="relative h-72 overflow-hidden">
                     <motion.img
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.7, ease: "easeOut" }}
+                      whileHover={isMobile ? {} : { scale: 1.1 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
                       src={venue.image}
                       alt={venue.name}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
 
@@ -836,16 +1006,23 @@ const WeddingHallCustomerHomepage = () => {
                     {/* Featured Badge */}
                     {venue.featured && (
                       <motion.div
-                        initial={{ scale: 0, rotate: -180 }}
-                        whileInView={{ scale: 1, rotate: 0 }}
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
                         viewport={{ once: true }}
                         transition={{
-                          delay: index * 0.1 + 0.3,
+                          delay: isMobile ? 0 : index * 0.05 + 0.2,
                           type: "spring",
-                          stiffness: 200,
+                          stiffness: 150,
                         }}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl backdrop-blur-sm"
+                        whileHover={
+                          isMobile
+                            ? {}
+                            : {
+                                scale: 1.05,
+                                transition: { duration: 0.3 },
+                              }
+                        }
+                        className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl backdrop-blur-sm z-20"
                       >
                         <Star className="w-4 h-4 fill-white" />
                         מומלץ
@@ -858,10 +1035,10 @@ const WeddingHallCustomerHomepage = () => {
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{
-                        delay: index * 0.1 + 0.4,
+                        delay: isMobile ? 0 : index * 0.05 + 0.3,
                         type: "spring",
                       }}
-                      className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold text-gray-900 shadow-lg"
+                      className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold text-gray-900 shadow-lg z-20"
                     >
                       {venue.priceRange}
                     </motion.div>
@@ -870,12 +1047,12 @@ const WeddingHallCustomerHomepage = () => {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 0, y: 20 }}
-                      whileHover={{ opacity: 1, y: 0 }}
+                      whileHover={isMobile ? {} : { opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute bottom-4 left-4 right-4 flex gap-2"
+                      className="absolute bottom-4 left-4 right-4 flex gap-2 z-20"
                     >
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={isMobile ? {} : { scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleBookNow(venue.id)}
                         className="flex-1 bg-white text-gray-900 px-4 py-3 rounded-xl font-bold hover:bg-rose-500 hover:text-white transition-all duration-300 shadow-xl"
@@ -883,7 +1060,7 @@ const WeddingHallCustomerHomepage = () => {
                         הזמן עכשיו
                       </motion.button>
                       <motion.button
-                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        whileHover={isMobile ? {} : { scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleViewDetails(venue.id)}
                         className="bg-white/90 backdrop-blur-sm p-3 rounded-xl hover:bg-white transition-all duration-300 shadow-xl"
@@ -1315,9 +1492,35 @@ const WeddingHallCustomerHomepage = () => {
       </footer>
 
       {/* Custom Smooth Scroll */}
-      <style jsx>{`
+      <style>{`
         html {
           scroll-behavior: smooth;
+        }
+        
+        /* GPU Acceleration for better performance */
+        .group img,
+        .group-hover\\:scale-110 {
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+        }
+        
+        /* Optimize animations */
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+        
+        /* Reduce complexity on mobile */
+        @media (max-width: 768px) {
+          .backdrop-blur-sm,
+          .backdrop-blur-lg {
+            backdrop-filter: none;
+            background-color: rgba(255, 255, 255, 0.95);
+          }
         }
       `}</style>
     </div>
